@@ -7,40 +7,28 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Task; 
 
-
 class PostController extends Controller
 {
 
-        public function index()
+    /**
+     * 記事一覧を表示する（検索機能付き）
+     */
+    public function index(Request $request)
     {
-        $posts = Post::all();
+        // 検索キーワードを取得
+        $keyword = $request->input('keyword');
+
+        if ($keyword) {
+            // キーワードがある場合：タイトルで絞り込み、結果を $posts に代入
+            $posts = Post::where('title', 'LIKE', '%' . $keyword . '%')->get();
+        } else {
+            // キーワードがない場合：全件取得
+            $posts = Post::all();
+        }
+
+        // ビューにデータを渡して表示
         return view('admin.posts.index', compact('posts'));
     }
-    
-    //  public function index(Request $request)
-    // {
-    //     $keyword = $request->input('keyword');  //$requestに'keyword'を代入
-    //     if($keyword){
-    //         Post::where('title','LIKE','%' . $keyword . '%')->get(); //$keywordの内容を部分一致条件に取得
-
-    //     } 
-    //         else {
-    //         $posts = Post::all();//全件取得
-    //     }
-    //     // return view('admin.posts.index', compact('posts'));
-    // }
-
-    // // indexの引数を変更します
-    // public function index(Request $request) 
-    // {
-    //     // 検索キーワードの取得
-    //     $keyword = $request->input('keyword'); 
-        
-    //     // 元々Post::all()と書いていたが、Post::query()->get()と書くこともできるので、
-    //     // 一旦Post::query()を変数に入れた後に、検索キーワードがあれば検索する。
-    //     Post::where('カラム名', '値')->get();
-    //     // ... (省略)
-    // }
     
     public function show($id)
     {
