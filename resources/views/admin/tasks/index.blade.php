@@ -1,0 +1,82 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            ▼タスク一覧
+        </h2>
+    </x-slot>
+    {{-- 白背景作成 --}}
+    <div class="py-6">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white shadow-sm rounded-lg">
+            <div class="p-6 text-gray-900">
+    {{-- ここから追記/修正 --}}
+
+    {{-- 編集成功メッセージの表示 --}}
+    @if (session('success'))
+        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded relative" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="py-18">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            {{-- ここにテーブルを書いていきます --}}
+            <div class="mb-4">
+            {{-- 登録画面(create)へ移動するボタン --}}
+             <div class="flex justify-end mb-4">
+            <a href="{{ route('admin.tasks.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                新規登録
+            </a>
+            </div>
+            
+            <!-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"> -->
+                <!-- <table class="w-full text-left border-collapse"> -->
+
+                   <table class="table-auto w-full border">
+                    <thead>
+                        <!-- <tr class="table-auto w-full border"> -->
+                            <th class="border px-4 py-2">ID</th>
+                            <th class="border px-4 py-2">タイトル</th>
+                            <th class="border px-4 py-2">対応期限</th>
+                            <th class="border px-4 py-2">優先度</th>
+                            <th class="border px-4 py-2">ステータス</th>
+                            <th class="border px-4 py-2">最終更新日時</th>
+                            <th class="border px-4 py-2">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($tasks as $task)
+                      <!-- <tr class="hover:bg-gray-50"> -->
+                        <td class="border px-4 py-2">{{ $task->id }}</td>
+                        <td class="border px-4 py-2">{{ $task->title }}</td>
+                        <td class="border px-4 py-2">{{ $task->deadline_at }}</td>
+                        <td class="border px-4 py-2">{{ config("const.task.priority." . $task->priority) }}</td>
+                        <td class="border px-4 py-2">{{ config("const.task.status." . $task->status) }}</td>
+                        <td class="border px-4 py-2">{{ $task->updated_at }}</td>
+                        
+ 
+                        <td class="border px-4 py-2 text-center">
+                          {{-- ボタンを横に並べるためのグループ --}}
+                          <div class="flex items-center justify-center space-x-3">
+                              {{-- 1. 詳細 --}}
+                              <a href="{{ route('admin.tasks.show', $task->id) }}" class="text-blue-600 hover:underline text-sm">詳細</a>
+                              {{-- 2. 編集 --}}
+                              <a href="{{ route('admin.tasks.edit', $task->id) }}" class="text-green-600 hover:underline text-sm">編集</a>
+
+                              {{-- 3. 削除 --}}
+                              <form action="{{ route('admin.tasks.destroy', $task->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');" class="inline">
+                                  @csrf
+                                  @method('DELETE')
+                                  <button type="submit" class="text-red-600 hover:underline text-sm">削除</button>
+                              </form>
+                          </div>
+                        </td>
+                      </tr>
+                    @endforeach
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

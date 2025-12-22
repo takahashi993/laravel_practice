@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;  // 報告用
 use App\Http\Controllers\NewInfoController; // 新着情報管理用
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\TaskController; // タスク管理用
 
 
 // --- Routeの定義例 ---
@@ -12,28 +13,32 @@ use App\Http\Controllers\PostController;
 
 
 
-
-
 // まだコントローラーが未作成のため、PostControllerに赤波線が出るけど、以後で作るので問題なし
 Route::get('/admin/posts', [PostController::class, 'index'])->name('admin.posts.index');
-
 //詳細画面
 Route::get('/admin/posts/{id}/detail', [PostController::class, 'show'])->name('admin.posts.show');
-
 //登録画面
 Route::get('/admin/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
 Route::post('/admin/posts/store', [PostController::class, 'store'])->name('admin.posts.store');
-
 //記事検索機能
 Route::get('/admin/posts/store', [PostController::class, 'search'])->name('admin.posts.search');
-
-
 //編集画面
 Route::get('/admin/posts/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
 Route::put('/admin/posts/{id}/update', [PostController::class, 'update'])->name('admin.posts.update');
-
 //削除画面
 Route::delete('/admin/posts/{id}/destroy', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+
+
+
+Route::get('/admin/tasks', [TaskController::class, 'index'])->name('admin.tasks.index');//一覧
+Route::get('/admin/tasks/{id}/edit', [TaskController::class, 'edit'])->name('admin.tasks.edit');//編集表示
+Route::put('/admin/tasks/{id}/update', [TaskController::class, 'update'])->name('admin.tasks.update');//編集更新
+Route::get('/admin/tasks/{id}/show', [TaskController::class, 'show'])->name('admin.tasks.show');//詳細
+Route::get('/admin/tasks/create', [TaskController::class, 'create'])->name('admin.tasks.create');//登録
+Route::post('/admin/tasks/store', [TaskController::class, 'store'])->name('admin.tasks.store');//登録バリデ
+Route::delete('/admin/tasks/{task}/destroy', [TaskController::class, 'destroy'])->name('admin.tasks.destroy');//削除
+
+
 
 // 元々new-info/input.php?mode=newという名前だったページ（登録画面）
 // Route::{メソッド（POST、GET）}({URL}, [{コントローラ名}::class, {メソッド名}])->name({エイリアス});
@@ -73,20 +78,6 @@ Route::get('/about', function () {
     // 直接ビューを返す例
     return view('about');
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Route::get('/', function () {
     return view('welcome');

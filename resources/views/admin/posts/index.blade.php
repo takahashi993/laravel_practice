@@ -63,9 +63,9 @@
                                         <a href="{{ route('admin.posts.edit', $val->id) }}" class="ml-2 text-green-600 hover:underline">編集</a>
                                         {{-- 削除ボタンの追加 --}}
                                         <form action="{{ route('admin.posts.destroy', $val->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:underline bg-transparent border-none cursor-pointer p-0 m-0">削除</button>
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline bg-transparent border-none cursor-pointer p-0 m-0">削除</button>
                                         </form>
                                     </td>
                                 </tr>

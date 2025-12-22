@@ -15,13 +15,14 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    
-                                        <!-- 追加する記事管理画面へのリンク（通常表示用） -->
+
+                    <!-- 追加する記事管理画面へのリンク（通常表示用） -->
                     <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
                         記事管理
                     </x-nav-link>
-
-
+                    <x-nav-link :href="route('admin.tasks.index')" :active="request()->routeIs('admin.tasks.*')">
+                        タスク管理
+                    </x-nav-link>
 
 
                 </div>
@@ -84,6 +85,12 @@
             <x-responsive-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
                 記事管理
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
+                タスク管理
+            </x-responsive-nav-link>
+
+
         </div>
 
         <!-- Responsive Settings Options -->

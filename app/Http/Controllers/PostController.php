@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Task; 
 
 
 class PostController extends Controller
@@ -63,7 +64,7 @@ class PostController extends Controller
         // バリデーションに失敗した場合
         if ($validator->fails()) {
             // リダイレクト先を admin.posts.create ルートに変更
-            return redirect(route('admin.posts.input')) 
+            return redirect(route('admin.posts.create')) 
                 ->withErrors($validator) // エラーメッセージをセッションに保存
                 ->withInput(); // 直前に入力されたデータをセッションに保存
         }
@@ -133,8 +134,8 @@ class PostController extends Controller
         // 記事一覧ページへリダイレクトし、成功メッセージを表示
         return redirect(route('admin.posts.index'))->with('success', '記事が正常に削除されました。');
     }
-    
-    private function validatePost(Request $request)
+
+    private function validatePost(Request $request)//バリデーション
     {
         $rules = [
             'title' => 'required|max:255',
@@ -157,4 +158,16 @@ class PostController extends Controller
 
         return Validator::make($request->all(), $rules, $messages, $attributes);
     }
+
+
+    public function task()
+{
+    // resources/views/admin/tasks/index.blade.php を表示する
+        
+        //データベースからすべてのタスクを取得する
+        $tasks = Task::all();
+
+        // 取得したデータを 'tasks' という名前でビューに渡す
+        return view('admin.tasks.index', compact('tasks'));
+}
 }
