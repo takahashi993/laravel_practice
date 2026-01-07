@@ -30,8 +30,12 @@
                               {{ config('const.task.priority')[$task->status] ?? '不明' }}
                           </p>
                       </div>
+                     <div class="flex items-center gap-2">
+                        <label class="text-lg font-bold ">担当者:</label>
+                        <p class="text-lg text-gray-900">{{ $task->user->name ?? '未設定' }}</p>
+                     </div>
                       <div class="flex items-center gap-2">
-                        <label class="text-lg font-bold ">期限</label>
+                        <label class="text-lg font-bold ">対応期限</label>
                         <p class="text-lg text-gray-900">{{ $task->deadline_at }}</p>
                      </div>
                      <div class="flex items-center gap-2">

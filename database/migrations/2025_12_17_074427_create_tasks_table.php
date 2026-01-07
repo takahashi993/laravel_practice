@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();//ID自動連番
+            // $table->unsignedBigInteger('user_id');//担当者
+            // $table->unsignedBigInteger('user_id')->after('id');//担当者
             $table->string('title');//型：短いテキスト 備考:タイトル
             $table->text('content');//型：長いテキスト 備考:内容
             $table->dateTime('deadline_at');//型：日時 備考:対応期限

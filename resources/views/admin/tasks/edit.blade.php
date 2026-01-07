@@ -1,4 +1,3 @@
-//編集のビュー
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -8,12 +7,12 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                     <form action="{{ route('admin.tasks.update', $task->id) }}" method="POST">
                      <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">ステータス</label>
-                            <form action="{{ route('admin.tasks.update', $task->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <select name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                            <select name="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" >
                             @foreach(config('const.task.status') as $key => $label)
                             <option value="{{ $key }}" {{ old('status', $task->status) == $key ? 'selected' : '' }}>
                             {{ $label }}
@@ -21,13 +20,24 @@
                             @endforeach
                             </select>
                       </div>
-                        <div class="mb-4">
+                      <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">優先度</label>
                             <select name="priority" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                             @foreach(config('const.task.priority') as $key => $label)
                                 <option value="{{ $key }}" {{ old('priority', $task->priority) == $key ? 'selected' : '' }}>{{ $label }}
                                 </option>
                             @endforeach
+                            </select>
+                        </div>
+                            <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700">担当者</label>
+                            <select name="user_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                <option value="">未選択</option>
+                                @foreach($users as $user)
+                                    <option value="{{ $user->id }}" {{ $user->id == $task->user_id ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                             <div class="mb-4">

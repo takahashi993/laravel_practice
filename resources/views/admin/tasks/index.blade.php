@@ -37,6 +37,7 @@
                         <!-- <tr class="table-auto w-full border"> -->
                             <th class="border px-4 py-2">ID</th>
                             <th class="border px-4 py-2">タイトル</th>
+                            <th class="border px-4 py-2">担当者</th>
                             <th class="border px-4 py-2">対応期限</th>
                             <th class="border px-4 py-2">優先度</th>
                             <th class="border px-4 py-2">ステータス</th>
@@ -49,6 +50,7 @@
                       <!-- <tr class="hover:bg-gray-50"> -->
                         <td class="border px-4 py-2">{{ $task->id }}</td>
                         <td class="border px-4 py-2">{{ $task->title }}</td>
+                        <td>{{ $task->user->name ?? '未設定' }}</td>
                         <td class="border px-4 py-2">{{ $task->deadline_at }}</td>
                         <td class="border px-4 py-2">{{ config("const.task.priority." . $task->priority) }}</td>
                         <td class="border px-4 py-2">{{ config("const.task.status." . $task->status) }}</td>
@@ -62,7 +64,6 @@
                               <a href="{{ route('admin.tasks.show', $task->id) }}" class="text-blue-600 hover:underline text-sm">詳細</a>
                               {{-- 2. 編集 --}}
                               <a href="{{ route('admin.tasks.edit', $task->id) }}" class="text-green-600 hover:underline text-sm">編集</a>
-
                               {{-- 3. 削除 --}}
                               <form action="{{ route('admin.tasks.destroy', $task->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');" class="inline">
                                   @csrf

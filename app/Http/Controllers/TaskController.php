@@ -23,8 +23,9 @@ class TaskController extends Controller // クラス名がファイル名と一�
 
     public function edit($id) //編集メソッド（）
     {
-        $task = Task::withTrashed()->findOrFail($id);
-        return view('admin.tasks.edit', compact('task'));
+        $task = Task::withTrashed()->findOrFail($id);// 1. 編集するタスクを取得
+        $users = \App\Models\Task::all();
+        return view('admin.tasks.edit', compact('task', 'users'));
     }
 
 
@@ -45,9 +46,12 @@ class TaskController extends Controller // クラス名がファイル名と一�
     }
 
 
-    public function create()//登録デメソッド
+    public function create()//登録メソッド
     {
-        return view('admin.tasks.create');
+        // Task ではなく User モデルから全ユーザーを取得 
+        $users = \App\Models\User::all();
+
+        return view('admin.tasks.create', compact('users'));
     }
 
     public function store(Request $request)
@@ -94,12 +98,14 @@ class TaskController extends Controller // クラス名がファイル名と一�
             'priority'    => 'required|integer', 
             'deadline_at' => 'required|date',    
             'acted_at'    => 'nullable|date',    
+            'user_id'     => 'required|integer|exists:users,id',//必須、数値である事、カラムにその数字が存在するか
         ];
 
         $messages = [
             'required' => ':attributeは必須項目です。',
             'max'      => ':attributeは:max文字以内で入力してください。',
             'date'     => ':attributeは正しい日付形式で入力してください。',
+            'user_id'  => '担当者入力は必須です。',
         ];
         
         $attributes = [
@@ -109,9 +115,25 @@ class TaskController extends Controller // クラス名がファイル名と一�
             'priority'    => '優先度',
             'deadline_at' => '対応期限',
             'support_at'  => '対応日時',
+            'user_id'     => '担当者'
         ];
 
         return \Illuminate\Support\Facades\Validator::make($request->all(), $rules, $messages, $attributes);
+    }
+
+    public function dashboard()//ダッシュボードのタスク表示
+    {
+        $loginUserId = auth()->id(); // 1. ログインユーザーのIDを取得 
+
+        $tasks = Task::where('user_id', $loginUserId) // 2. 条件に合うタスクを取得 
+            ->whereIn('status', [1, 2]) // ステータスが 1 または 2
+            ->orderBy('deadline_at', 'asc') // ★ここで「対応期限が近い順（昇順）」に並び替える
+            ->get();
+
+            // ここに追加して、中身を画面に強制表示して止めます
+            // dd($tasks);
+
+        return view('dashboard', compact('tasks')); // 3. ビューに変数 $tasks を渡して表示 
     }
 
 

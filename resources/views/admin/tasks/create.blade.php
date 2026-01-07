@@ -1,4 +1,3 @@
-//新規登録画面
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -32,6 +31,18 @@
                    <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">内容:</label>
                         <textarea name="content" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">{{ old('content') }}</textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">担当者</label>
+                        <select name="user_id" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                            <!-- <option value="">選択してください</option> -->
+                            @foreach($users as $user)
+                                {{-- value には ID を、表示には名前（name）を使います --}}
+                                <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">対応期限:</label>

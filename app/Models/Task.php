@@ -15,7 +15,7 @@ class Task extends Model
 
     // savePostメソッドで個別にプロパティを設定するため、$fillableは必須ではありませんが、
     // create()など他のLaravelの機能を使う場合に備えて残しておくと良いでしょう。
-    protected $fillable = ['title', 'body', 'published_at'];
+    protected $fillable = ['title', 'content', 'status', 'priority', 'deadline_at', 'support_at', 'user_id'];
 
     /**
      * 投稿データをモデルに設定し、保存するカスタムメソッド
@@ -31,11 +31,18 @@ class Task extends Model
         $this->status      = $request->input('status');
         $this->priority    = $request->input('priority');
         $this->deadline_at = $request->input('deadline_at');
-        
-
+        $this->user_id     = $request->input('user_id');
         $this->support_at  = $request->input('support_at');
 
         // 登録/編集処理
+        // dd($this->toArray());
         $this->save();
     }
+
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
+
+    
 }

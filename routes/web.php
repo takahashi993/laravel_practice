@@ -10,26 +10,18 @@ use App\Http\Controllers\TaskController; // タスク管理用
 
 // --- Routeの定義例 ---
 // Route::{メソッド（POST、GET）}({URL}, [{コントローラ名}::class, {メソッド名}])->name({エイリアス});
+// 記事管理ルート
+Route::get('/admin/posts', [PostController::class, 'index'])->name('admin.posts.index');//一覧
+Route::get('/admin/posts/{id}/detail', [PostController::class, 'show'])->name('admin.posts.show');//詳細画面
+Route::get('/admin/posts/create', [PostController::class, 'create'])->name('admin.posts.create');//登録画面
+Route::post('/admin/posts/store', [PostController::class, 'store'])->name('admin.posts.store');//登録画面
+Route::get('/admin/posts/store', [PostController::class, 'search'])->name('admin.posts.search');//記事検索機能
+Route::get('/admin/posts/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');//編集画面
+Route::put('/admin/posts/{id}/update', [PostController::class, 'update'])->name('admin.posts.update');//編集画面
+Route::delete('/admin/posts/{id}/destroy', [PostController::class, 'destroy'])->name('admin.posts.destroy');//削除画面
 
 
-
-// まだコントローラーが未作成のため、PostControllerに赤波線が出るけど、以後で作るので問題なし
-Route::get('/admin/posts', [PostController::class, 'index'])->name('admin.posts.index');
-//詳細画面
-Route::get('/admin/posts/{id}/detail', [PostController::class, 'show'])->name('admin.posts.show');
-//登録画面
-Route::get('/admin/posts/create', [PostController::class, 'create'])->name('admin.posts.create');
-Route::post('/admin/posts/store', [PostController::class, 'store'])->name('admin.posts.store');
-//記事検索機能
-Route::get('/admin/posts/store', [PostController::class, 'search'])->name('admin.posts.search');
-//編集画面
-Route::get('/admin/posts/{id}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
-Route::put('/admin/posts/{id}/update', [PostController::class, 'update'])->name('admin.posts.update');
-//削除画面
-Route::delete('/admin/posts/{id}/destroy', [PostController::class, 'destroy'])->name('admin.posts.destroy');
-
-
-
+//タスク管理ルート
 Route::get('/admin/tasks', [TaskController::class, 'index'])->name('admin.tasks.index');//一覧
 Route::get('/admin/tasks/{id}/edit', [TaskController::class, 'edit'])->name('admin.tasks.edit');//編集表示
 Route::put('/admin/tasks/{id}/update', [TaskController::class, 'update'])->name('admin.tasks.update');//編集更新
@@ -83,9 +75,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+//変更後：TaskController の dashboard メソッドを呼ぶようにする
+Route::get('/dashboard', [TaskController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -129,6 +129,7 @@ class PostController extends Controller
             'title' => 'required|max:255',
             'body' => 'required',
             'published_at' => 'nullable|date_format:Y-m-d\TH:i', // HTMLのdatetime-local形式に対応
+            'user_id' => 'required|numeric',
         ];
 
         $messages = [
