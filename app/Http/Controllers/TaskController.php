@@ -131,7 +131,7 @@ class TaskController extends Controller // クラス名がファイル名と一�
     public function edit($id) //編集メソッド（）
     {
         $task = Task::withTrashed()->findOrFail($id);// 1. 編集するタスクを取得
-        $users = \App\Models\Task::all();
+        $users = \App\Models\User::all();
         return view('admin.tasks.edit', compact('task', 'users'));
     }
 

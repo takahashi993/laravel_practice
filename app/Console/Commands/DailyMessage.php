@@ -63,10 +63,10 @@ foreach ($groupedTasks as $userId => $tasks) {
         $taskListText .= "{$deadline}: {$task->title}（{$statusName}）\n";
     }
 
-// 👇 これを追加して保存してください
+
     \Illuminate\Support\Facades\Log::info('メール送信ループ通過: ' . $user->email);
 
-    Mail::to($user->email)->send(new \App\Mail\DailyMessege($user->name, $taskListText));
+    Mail::to($user->email)->send(new \App\Mail\WelcomeMail($user->name, $taskListText));
     
     $this->info("送信完了: {$user->name} ({$user->email})");
 }

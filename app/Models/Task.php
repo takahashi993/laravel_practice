@@ -13,8 +13,6 @@ class Task extends Model
 
     use SoftDeletes;
 
-    // savePostメソッドで個別にプロパティを設定するため、$fillableは必須ではありませんが、
-    // create()など他のLaravelの機能を使う場合に備えて残しておくと良いでしょう。
     protected $fillable = ['title', 'content', 'status', 'priority', 'deadline_at', 'support_at', 'user_id'];
 
     /**
