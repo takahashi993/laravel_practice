@@ -8,12 +8,119 @@ use App\Http\Controllers\Controller;
 
 class TaskController extends Controller // クラス名がファイル名と一致
 {
-    public function index() //一覧メソッド
+    public function index(Request $request) 
     {
-    // withTrashed() を取ると、削除されていないタスクだけを取得
-    $tasks = Task::latest()->get();
-    return view('admin.tasks.index', compact('tasks'));
+        // 1. 全ユーザーを取得
+        $users = \App\Models\User::all();
+        // 2. タスクを探す命令予約
+        $query = Task::query();
+        // ３【検索条件】
+        // --- タイトル---
+        if ($request->filled('title')) {
+            $query->where('title', 'LIKE', "%{$request->title}%");
+        }
+        // --- 担当者 ---
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+        // --- ステータス（複数選択対応） ---
+        if ($request->filled('status')) {
+            // statusは配列で届くので whereIn を使う
+            $query->whereIn('status', $request->status);
+        }
+        // --- 優先度（複数選択対応） ---
+        if ($request->filled('priority')) {
+            // priorityは配列で届くので whereIn を使う
+            $query->whereIn('priority', $request->priority);
+        }
+        // --- 対応期限（開始日） ---
+        if ($request->filled('deadline_from')) {
+            // deadline_at が 開始日(deadline_from) 以上のものを探す
+            $query->where('deadline_at', '>=', $request->deadline_from);
+        }
+        // --- 対応期限（終了日） ---
+        if ($request->filled('deadline_to')) {
+            // deadline_at が 終了日(deadline_to) 以下のものを探す
+            $query->where('deadline_at', '<=', $request->deadline_to);
+        }
+
+        // 4. 最後にデータを取得して実行
+        $tasks = $query->latest()->get();
+        return view('admin.tasks.index', compact('tasks', 'users'));
     }
+
+        public function downloadCsv(Request $request)
+        {
+            $query = Task::query();
+
+            if ($request->filled('title')) {
+            $query->where('title', 'LIKE', "%{$request->title}%");
+            }
+            // --- 担当者 ---
+            if ($request->filled('user_id')) {
+                $query->where('user_id', $request->user_id);
+            }
+            // --- ステータス（複数選択対応） ---
+            if ($request->filled('status')) {
+                // statusは配列で届くので whereIn を使う
+                $query->whereIn('status', $request->status);
+            }
+            // --- 優先度（複数選択対応） ---
+            if ($request->filled('priority')) {
+                // priorityは配列で届くので whereIn を使う
+                $query->whereIn('priority', $request->priority);
+            }
+            // --- 対応期限（開始日） ---
+            if ($request->filled('deadline_from')) {
+                // deadline_at が 開始日(deadline_from) 以上のものを探す
+                $query->where('deadline_at', '>=', $request->deadline_from);
+            }
+            // --- 対応期限（終了日） ---
+            if ($request->filled('deadline_to')) {
+                // deadline_at が 終了日(deadline_to) 以下のものを探す
+                $query->where('deadline_at', '<=', $request->deadline_to);
+            }
+
+            $tasks = $query->latest()->get();
+
+            $data = [
+                ['ID', 'タイトル', '担当者名', '対応期限', '優先度', 'ステータス', '最終更新日時']
+            ];
+
+            foreach ($tasks as $task) {
+                $data[] = [
+                    $task->id,
+                    $task->title,
+                    $task->user->name ?? '未設定',
+                    $task->deadline_at,
+                    config("const.task.priority." . $task->priority),
+                    config("const.task.status." . $task->status),
+                    $task->updated_at,
+                ];
+            }
+
+            $csv = '';
+            foreach ($data as $row) {
+                $escaped = [];
+                foreach ($row as $value) {
+                    $escaped[] = "'" . str_replace("'", "''", $value) . "'";
+                }
+                $csv .= implode(',', $escaped) . "\r\n";
+            }
+
+            $filename = 'tasks_export_' . date('YmdHis') . '.csv';
+            $encodedCsv = mb_convert_encoding($csv, 'SJIS-win', 'UTF-8');
+
+            return response($encodedCsv, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename=' . $filename,
+            ]);
+        }
+
+
+
+
+
 
     public function show($id)// 詳細メソッド
     {
@@ -31,18 +138,18 @@ class TaskController extends Controller // クラス名がファイル名と一�
 
     public function update(Request $request, $id)//編集メソッド更新
     {
-    // ① 削除済みのデータも含めて対象を探す
-    $task = \App\Models\Task::withTrashed()->findOrFail($id);
+        // ① 削除済みのデータも含めて対象を探す
+        $task = \App\Models\Task::withTrashed()->findOrFail($id);
 
-    // ② データを更新する
-    $task->update($request->all());
+        // ② データを更新する
+        $task->update($request->all());
 
-    // ③ ここで「復元」を実行してゴミ箱から出す 
-    $task->restore();
+        // ③ ここで「復元」を実行してゴミ箱から出す 
+        $task->restore();
 
-    return redirect()
-        ->route('admin.tasks.index')
-        ->with('success', 'タスクを更新し、復元しました！');
+        return redirect()
+            ->route('admin.tasks.index')
+            ->with('success', 'タスクを更新し、復元しました！');
     }
 
 

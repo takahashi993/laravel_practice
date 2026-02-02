@@ -29,6 +29,8 @@ Route::get('/admin/tasks/{id}/show', [TaskController::class, 'show'])->name('adm
 Route::get('/admin/tasks/create', [TaskController::class, 'create'])->name('admin.tasks.create');//登録
 Route::post('/admin/tasks/store', [TaskController::class, 'store'])->name('admin.tasks.store');//登録バリデ
 Route::delete('/admin/tasks/{task}/destroy', [TaskController::class, 'destroy'])->name('admin.tasks.destroy');//削除
+Route::post('/admin/tasks/download-csv', [TaskController::class, 'downloadCsv'])->name('admin.tasks.download-csv');
+;//CSVダウンロード機能
 
 
 

@@ -10,6 +10,94 @@
         <div class="bg-white shadow-sm rounded-lg">
             <div class="p-6 text-gray-900">
     {{-- ここから追記/修正 --}}
+{{-- 検索エリア --}}
+<div class="py-6">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white shadow-sm rounded-lg">
+            <div class="p-6 text-gray-900">
+                <form method="GET" action="/admin/tasks">
+                    <div class="search-form-container" style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; padding: 10px; border-bottom: 1px solid #ccc;">
+                        <div>
+                            <label for="search_title">タイトル:</label>
+                            <input type="text" id="search_title" name="title" value="">
+                        </div>
+                        <div>
+                            <select id="search_user_id" name="user_id">
+                                <option value="">すべて</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div style="border: 1px solid #eee; padding: 5px;">
+                            <label>ステータス:</label>
+                            <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 5px;">
+                                <label><input type="checkbox" name="status[]" value="1"> 起票</label>
+                                <label><input type="checkbox" name="status[]" value="2"> 対応中</label>
+                                <label><input type="checkbox" name="status[]" value="3"> 対応済</label>
+                                <label><input type="checkbox" name="status[]" value="4"> 承認</label>
+                                {{-- 他のステータスオプションが続く --}}
+                            </div>
+                        </div>
+                        <div style="border: 1px solid #eee; padding: 5px;">
+                            <label>優先度:</label>
+                            <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 5px;">
+                                <label><input type="checkbox" name="priority[]" value="1"> 極高</label>
+                                <label><input type="checkbox" name="priority[]" value="2"> 高</label>
+                                <label><input type="checkbox" name="priority[]" value="3"> 中</label>
+                                {{-- 他の優先度オプションが続く --}}
+                            </div>
+                        </div>
+                        <div style="flex-basis: 100%;"> 
+                            <label for="search_deadline_from">対応期限 (From):</label>
+                            <input type="date" id="search_deadline_from" name="deadline_from" value="">
+                        </div>
+                        <div>
+                            <label for="search_deadline_to">対応期限 (To):</label>
+                            <input type="date" id="search_deadline_to" name="deadline_to" value="">
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" style="padding: 8px 15px; background-color: #010c03ff; color: white;">検索</button>
+                        <a href="/admin/tasks" role="button" style="padding: 8px 15px; text-decoration: none; border: 1px solid #ccc; color: #333;">リセット</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- CSVダウンロードボタン（新規作成ボタンの上に配置） --}}
+{{-- 画面一覧と同内容をダウンロードするため、検索条件をhiddenで保持する --}}
+<div class="flex items-center justify-end">
+  <form method="POST" action="/admin/tasks/download-csv" style="margin-top: 20px;">
+        @csrf
+        <input type="hidden" name="title" value="{{ request('title')}}">
+        <input type="hidden" name="user_id" value="{{ request('user_id') }}">
+        {{-- ステータスを選択された分だけループ処理 --}}
+        @if(is_array(request('status')))
+            @foreach(request('status') as $s)
+                <input type="hidden" name="status[]" value="{{ $s }}">
+            @endforeach
+        @endif
+        {{-- 優先度を選択された分だけループ処理 --}}
+        @if(is_array(request('priority')))
+            @foreach(request('priority') as $p)
+                <input type="hidden" name="priority[]" value="{{ $p }}">
+            @endforeach
+        @endif
+
+        <input type="hidden" name="deadline_from" value="{{ request('deadline_from') }}">
+        <input type="hidden" name="deadline_to" value="{{ request('deadline_to') }}">
+
+        <button type="submit" style="padding: 8px 15px; background-color: #28a745; color: white;">CSVダウンロード</button>
+    </form>
+</div>
+
+
+
+
+
 
     {{-- 編集成功メッセージの表示 --}}
     @if (session('success'))

@@ -2,8 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Task;
 use Illuminate\Console\Command;
 use Carbon\Carbon; // 日付操作のために使用
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
+use App\Mail\RemindMail;
 
 class DailyMessage extends Command
 {
@@ -13,7 +17,7 @@ class DailyMessage extends Command
      * @var string
      */
     // コマンド名を定義します。
-    protected $signature = 'message:daily';
+    protected $signature = 'app:task-remind {target_date?}';
 
     /**
      * The console command description.
@@ -25,17 +29,46 @@ class DailyMessage extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
-    {
-        $this->info('日次メッセージバッチを開始します。');
+public function handle()
+{
+    // 1. 基準日の決定
+    $baseDate = $this->argument('target_date') 
+                ? Carbon::parse($this->argument('target_date')) 
+                : Carbon::today();
 
-        $currentDate = Carbon::today()->format('Y年m月d日');
+    // 2. 「翌日」を計算
+    $targetDate = $baseDate->copy()->addDay()->toDateString();
 
-        // ここに簡単な処理を記述します。
-        $this->info($currentDate . ' のメッセージです: Laravelバッチは快適です！');
+    $this->info("基準日: " . $baseDate->toDateString() . " / 対象日: " . $targetDate . " の抽出を開始します。");
 
-        $this->info('日次メッセージバッチが完了しました。');
+    // 1. タスクを取得し、担当者ごとにグループ化する
+    $groupedTasks = Task::whereDate('deadline_at', $targetDate)
+    ->whereIn('status', [1, 2])
+    ->with('user') // Eager Loadingでユーザー情報も一緒に取得
+    ->get()
+    ->groupBy('user_id'); 
 
-        return Command::SUCCESS;
+foreach ($groupedTasks as $userId => $tasks) {
+    // 最初のタスクからユーザー情報を取得
+    $user = $tasks->first()->user;
+    
+    if (!$user || $user->deleted_at) continue;
+
+    // 2. そのユーザーのタスク一覧をテキストにまとめる
+    $taskListText = "";
+    foreach ($tasks as $task) {
+        $statusName = ($task->status == 1) ? '起票' : '対応中';
+        // フォーマット: 2026年1月8日 15時03分: タイトル（ステータス）
+        $deadline = $task->deadline_at->format('Y年n月j日 G時i分');
+        $taskListText .= "{$deadline}: {$task->title}（{$statusName}）\n";
+    }
+
+// 👇 これを追加して保存してください
+    \Illuminate\Support\Facades\Log::info('メール送信ループ通過: ' . $user->email);
+
+    Mail::to($user->email)->send(new \App\Mail\DailyMessege($user->name, $taskListText));
+    
+    $this->info("送信完了: {$user->name} ({$user->email})");
+}
     }
 }
