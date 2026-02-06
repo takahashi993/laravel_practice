@@ -5,11 +5,34 @@ namespace App\Http\Controllers; // このファイルの住所
 use Illuminate\Http\Request;
 use App\Models\Task;
 use App\Http\Controllers\Controller; 
+use Illuminate\Support\Facades\Gate;
 
 class TaskController extends Controller // クラス名がファイル名と一致
 {
     public function index(Request $request) 
     {
+
+    // // 👇 ここから追加
+    // dd([
+    //     'ログイン中のユーザーID' => auth()->id(),
+    //     'ユーザーのロール(role)' => auth()->user()->role,
+    //     'Gate(admin-task-access)の判定' => \Illuminate\Support\Facades\Gate::allows('admin-task-access'),
+    //     'Gate(article-access)の判定' => \Illuminate\Support\Facades\Gate::allows('article-access'),
+    // ]);
+    // 👆 ここまで
+        // ログイン中のユーザーのroleを表示して停止
+        // dd(auth()->user()->role);
+
+        // Gateがこのユーザーをどう判定しているか「生の結果」を表示
+    // dd([
+    //     'ログインユーザーID' => auth()->id(),
+    //     'ロール' => auth()->user()->role,
+    //     'admin-task-accessの判定結果' => Gate::allows('admin-task-access'),
+    // ]);
+
+
+        // ... その後の処理 ...
+
         // 1. 全ユーザーを取得
         $users = \App\Models\User::all();
         // 2. タスクを探す命令予約

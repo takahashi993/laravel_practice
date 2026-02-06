@@ -15,15 +15,20 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <div class="text-xs text-gray-400">
+                    現在のRole: {{ Auth::user()?->role }}
+                    </div>
 
-                    <!-- 追加する記事管理画面へのリンク（通常表示用） -->
+                     @can('article-access') {{--  --}}
                     <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
-                        記事管理
+                    記事管理
                     </x-nav-link>
+                    @endcan
+                    @can('admin-task-access') {{--  --}}
                     <x-nav-link :href="route('admin.tasks.index')" :active="request()->routeIs('admin.tasks.*')">
-                        タスク管理
+                    タスク管理
                     </x-nav-link>
-
+                    @endcan
 
                 </div>
             </div>
