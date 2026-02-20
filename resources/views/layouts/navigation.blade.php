@@ -15,9 +15,7 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <div class="text-xs text-gray-400">
-                    現在のRole: {{ Auth::user()?->role }}
-                    </div>
+
 
                      @can('article-access') {{--  --}}
                     <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
