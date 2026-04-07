@@ -28,6 +28,9 @@
                     <x-nav-link :href="route('admin.tasks.index')" :active="request()->routeIs('admin.tasks.*')">
                     タスク管理
                     </x-nav-link>
+                    <x-nav-link :href="route('equipment.index')" :active="request()->routeIs('equipment.*')">
+    {{ __('備品管理') }}
+</x-nav-link>
                     @endcan
 
                 </div>

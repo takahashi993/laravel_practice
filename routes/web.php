@@ -6,6 +6,9 @@ use App\Http\Controllers\ReportController;  // 報告用
 use App\Http\Controllers\NewInfoController; // 新着情報管理用
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TaskController; // タスク管理用
+use App\Http\Controllers\EquipmentController; // これが必要
+
+Route::resource('equipment', EquipmentController::class);
 
 
 
