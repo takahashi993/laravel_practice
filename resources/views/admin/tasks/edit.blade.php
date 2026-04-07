@@ -51,12 +51,13 @@
                                 value="{{ old('support_at', $task->support_at ? date('Y-m-d\TH:i', strtotime($task->support_at)) : '') }}" 
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                          </div>
-                            <label class="block text-sm font-medium text-gray-700">内容</label>
-                            <textarea name="content" class="w-full">{{ $task->content }}</textarea>
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700">タイトル</label>
                             <input type="text" name="title" value="{{ $task->title }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
                         </div>
+                            <label class="block text-sm font-medium text-gray-700">内容</label>
+                            <textarea name="content" class="w-full">{{ $task->content }}</textarea>
+
                         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">編集</button>
                 </form>
             </div>
