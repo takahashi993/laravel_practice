@@ -15,9 +15,9 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <div class="text-xs text-gray-400">
+                    <!-- <div class="text-xs text-gray-400">
                     現在のRole: {{ Auth::user()?->role }}
-                    </div>
+                    </div> -->
 
                      @can('article-access') {{--  --}}
                     <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
@@ -28,9 +28,12 @@
                     <x-nav-link :href="route('admin.tasks.index')" :active="request()->routeIs('admin.tasks.*')">
                     タスク管理
                     </x-nav-link>
-                    <x-nav-link :href="route('equipment.index')" :active="request()->routeIs('equipment.*')">
-    {{ __('備品管理') }}
-</x-nav-link>
+                    <x-nav-link :href="route('admin.equipments.index')" :active="request()->routeIs('admin.equipments.*')">
+                    {{ __('備品管理') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.equipment-categories.index')" :active="request()->routeIs('admin.equipment-categories.*')">
+                        {{ __('備品カテゴリー') }}
+                    </x-nav-link>
                     @endcan
 
                 </div>

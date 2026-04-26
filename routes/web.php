@@ -6,10 +6,31 @@ use App\Http\Controllers\ReportController;  // 報告用
 use App\Http\Controllers\NewInfoController; // 新着情報管理用
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TaskController; // タスク管理用
-use App\Http\Controllers\EquipmentController; // これが必要
+use App\Http\Controllers\EquipmentController; // 備品管理
+use App\Http\Controllers\EquipmentCategoryController; // 備品カテゴリー
 
-Route::resource('equipment', EquipmentController::class);
+//備品カテゴリー
+Route::get('admin/equipment-categories', [EquipmentCategoryController::class, 'index'])
+    ->name('admin.equipment-categories.index');
 
+//備品管理
+Route::prefix('admin')->name('admin.')->group(function () {
+    // 1. 一覧画面
+    Route::get('equipments', [EquipmentController::class, 'index'])->name('equipments.index');
+    // 2. 登録画面 (URL: /admin/equipments/create)
+    Route::get('equipments/create', [EquipmentController::class, 'create'])->name('equipments.create');
+    // 2. 登録画面保存 (URL: /admin/equipments/store)
+    Route::post('equipments/store', [EquipmentController::class, 'store'])->name('equipments.store');
+    // 3. 詳細画面 (URL: /admin/equipments/{id}/detail)
+    Route::get('equipments/{id}/show', [EquipmentController::class, 'show'])->name('equipments.show');
+    // 4. 編集画面 (URL: /admin/equipments/{id}/edit)
+    Route::get('equipments/{id}/edit', [EquipmentController::class, 'edit'])->name('equipments.edit');
+    // 5. 削除画面 (URL: /admin/equipments/{id}/edit)
+    Route::delete('equipments/{id}/', [EquipmentController::class, 'destroy'])->name('equipments.destroy');
+    //  編集画面 (URL: /admin/equipments/{id}/update)
+    Route::put('equipments/{id}', [EquipmentController::class, 'update'])->name('equipments.update');
+
+});
 
 
 // --- 1. タスク管理：システム管理者(1)と管理者(2)だけが入れるグループ ---
